@@ -55,14 +55,14 @@ $xpath = new DOMXPath($doc);
   crawl (i.e. web crawl over several pages)
   normal (i.e. grabs all data off the same page)
   Antrim and Newry are unique */
-$manual = array (81,106,131,170,173,270);
+$manual = array (81,106,131,170,173,186,270);
 $loop = array (35,56,144,179,233,303,305,309,314,318,324,1010);
 $antrim = array (1001);
 $newry = array(1010);
 $crawl = array(26,33,37,43,46,66,97,108,113,115,120,121,127,135,145,146,159,167,192,198,208,209,211,215,222,226,268,275,288,307,308,310,312,317,325,326,337,339,348,349,351,358,375,387,407,1002,1006,1009);
 
 /* Load relevant scrape page as include */
-if(in_Array($councilNumber, $manual)) { include("manualScrape.php"); echo " (MANUAL)"; }
+if(in_Array($councilNumber, $manual)) { $blockCleaningFlag = 1; echo " (MANUAL)"; }
 elseif(in_Array($councilNumber, $loop)) { include("loopScrape.php"); echo " (LOOP)"; }
 elseif(in_Array($councilNumber, $antrim)) { include("antrimScrape.php"); echo " (ANTRIM)"; }
 elseif(in_Array($councilNumber, $newry)) { include("newryScrape.php"); echo " (NEWRY)"; }
