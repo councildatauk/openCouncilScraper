@@ -131,7 +131,7 @@ if($autoFlag == "1" && $councilNumber == "406") { echo '<script>window.location.
 $manual = array (81,106,131,170,173,270);
 if($autoFlag == "1") {
  $newCouncil = $councilNumber + 1;
- if(in_Array($newCouncil, $manualPages)) { $newCouncil++; }
+ if(in_Array($newCouncil, $manual)) { $newCouncil++; }
  echo 'SKIPPING...<script>window.location.href = "scrape.php?a=1&c='.$newCouncil.'";</script>'; }
 else { 
  if($councilNumber < 1000) { echo '<script>window.location.href = "processing.php";</script>'; } else { echo '<script>window.location.href = "niprocessing.php";</script>'; }
