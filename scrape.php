@@ -1,23 +1,5 @@
 <?php
-session_start();
-header('Content-Type: text/html; charset=UTF-8');
-if(!$_SESSION['logged']) { header("Location: log.php"); exit; }
-ini_set('display_errors',1);
-ini_set("default_charset", 'utf-8');
-error_reporting(E_ALL);
-
-include("databaseConnection.inc");
-
-echo '
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf8_unicode_ci"/> <meta http-equiv="Content-Language" content="en" />
-<link rel="stylesheet" href="ukpol.css">
-<script src="sorttable.js"></script>
-</head>
-<body>
-';
+include("header.inc");
 
 /* _GET council number and auto flag, & retrieve council name and URL from DB */
 $councilNumber = pg_escape_string($_GET['c']);
@@ -38,10 +20,12 @@ $string = file_get_contents($councilURL,false,$context);
 echo $councilNumber.'. <a href="'.$councilURL.'">'.$councilName.'</a><br>';
 
 /* Setup standard arrays */
-$n = array();
-$p = array();
-$pCode = array();
-$w = array();
+$n = array();		/* Will contain scraped councillor names */
+$p = array();		/* Will contain scraped parties as raw string */
+$pCode = array();	/* Will contain scraped parties as three letter codes */
+$w = array();		/* Will contain scraped ward names */
+$pL = array();		/* Will contain scraped list of parties where we have to loop through them */
+$blockCleaningFlag = 0;	/* Flag to skip entire cleanup section (needed for loop-type councils and antrim page) */
 $con = 0;
 $lab = 0;
 $ld = 0;
@@ -49,9 +33,6 @@ $grn = 0;
 $ukip = 0;
 $pc = 0;
 $snp = 0;
-$ind = 0;
-$vac = 0;
-$pL = array();
 $dup = 0;
 $sf = 0;
 $uup = 0;
@@ -59,16 +40,17 @@ $sdlp = 0;
 $ali = 0;
 $tuv = 0;
 $pup = 0;
-$blockCleaningFlag = 0;
+$ind = 0;
+$vac = 0;
+$total = 0;
 
 /* Convert HTML to navigable DOMXPATH object */
 $doc = new DOMDocument(); 
 @$doc->loadHTML($string);
 $xpath = new DOMXPath($doc);
 
-/* Definitions for which pages are handled by which scraping method. 
-Options: 
-  manual (i.e. click on link to manually fill in fields)
+/* Definitions for which webpages are handled by which scraping method. 
+  manual (i.e. click on link to manually fill in fields - stopped working)
   loop (i.e. page has ward name 1 then several cllrs, ward name 2, several cllrs)
   crawl (i.e. web crawl over several pages)
   normal (i.e. grabs all data off the same page)
@@ -79,7 +61,7 @@ $antrim = array (1001);
 $newry = array(1010);
 $crawl = array(26,33,37,43,46,66,97,108,113,115,120,121,127,135,145,146,159,167,192,198,208,209,211,215,222,226,268,275,288,307,308,310,312,317,325,326,337,339,348,349,351,358,375,387,407,1002,1006,1009);
 
-/* Load relevant scrape page */
+/* Load relevant scrape page as include */
 if(in_Array($councilNumber, $manual)) { include("manualScrape.php"); echo " (MANUAL)"; }
 elseif(in_Array($councilNumber, $loop)) { include("loopScrape.php"); echo " (LOOP)"; }
 elseif(in_Array($councilNumber, $antrim)) { include("antrimScrape.php"); echo " (ANTRIM)"; }
@@ -87,7 +69,7 @@ elseif(in_Array($councilNumber, $newry)) { include("newryScrape.php"); echo " (N
 elseif(in_Array($councilNumber, $crawl)) { include("crawlScrape.php"); echo " (CRAWL)"; }
 else { include("normalScrape.php"); echo " (NORMAL)"; }
 
-/* Additional general cleanups (for loop extends from here to line 268 */
+/* Cleanup (for loop extends from here to ~line 232) */
 if($blockCleaningFlag == 0) {
 for($i=0;$i<count($n);$i++) { 
  if(substr($p[$i],0,14) == "Representing; ") { $p[$i] = trim(substr($p[$i],14)); }
@@ -267,7 +249,7 @@ if(strpos($w[$i],',') !== FALSE) { $w[$i] = str_replace(',', '', $w[$i]); }
  if($councilNumber == 152 && substr($n[$i],0,14) == "Elizabeth Parr") { $n[$i] = "IG"; $w[$i] = "IG"; $p[$i-2] = "IG"; }
 }
 
-/* Remove Ignored Fields from section above and re-shuffle arrays as reqd */
+/* New loop to remove Ignored Fields from section above and re-shuffle arrays as reqd */
 for($i=0;$i<count($n);$i++) {
  $ignoreFlag = 0;
  if($n[$i] == "IG") { unset($n[$i]); $n = array_values($n); $ignoreFlag = 1; }

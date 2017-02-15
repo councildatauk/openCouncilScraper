@@ -1,23 +1,5 @@
 <?php
-session_start();
-header('Content-Type: text/html; charset=UTF-8');
-if(!$_SESSION['logged']) { header("Location: log.php"); exit; }
-ini_set('display_errors',1);
-ini_set("default_charset", 'utf-8');
-error_reporting(E_ALL);
-
-require_once("databaseConnection.inc");
-
-echo '
-<!DOCTYPE html>
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf8_unicode_ci"/> <meta http-equiv="Content-Language" content="en" />
-<link rel="stylesheet" href="ukpol.css">
-<script src="sorttable.js"></script>
-</head>
-<body>
-';
+include("header.inc");
 
 /* Get session variables */
 $n = $_SESSION['n'];
@@ -48,7 +30,7 @@ $total = 0;
 /* Ensure names can be unicode */
 for($i=0;$i<count($n[$i]);$i++) { $n[$i] = htmlentities($n[$i]); }
 
-/* Get real total for council */
+/* Get real total for council (for use in loop below) */
 $queryStr = "SELECT id FROM wards WHERE councilID = ".$councilNumber;
 if(!$result = $mysqli->query($queryStr)) { echo "Query Err"; exit; }
 if($result->num_rows === 0) { echo "No matched rows"; exit; }
@@ -77,8 +59,8 @@ $ele[$i] = $_POST[$elePOST];
 $notes = addslashes($_POST['NOT']);
 $date = date('Y.m.d', time());
 
-/* Recalculate totals based on new data structure and check they're correct, otherwise return */
-/* New figures based on cpCode field in scrape table */
+/* Recalculate totals based on new data structure */
+/* New figures based on cpCode field in scrape table, not just a count of scraped data */
 for($i=0;$i<count($wID);$i++) {
  if($cpCode[$i] == "CON") { $con++; }
  if($cpCode[$i] == "LAB") { $lab++; }
@@ -102,7 +84,7 @@ echo $councilNumber.". ".$councilName."<br>";
 echo "UPDATING FULL COUNCIL DATA...";
 echo "<table>";
 for($i=0;$i<$realTotal;$i++) {
-/* Update data to wards and wcouncillors */
+/* Update data to wards and wcouncillors tables */
  $queryStr = "
 UPDATE wards w 
 INNER JOIN wcouncillors c ON w.id = c.wardID 
@@ -111,7 +93,7 @@ WHERE w.id = {$wID[$i]}";
 $result = mysqli_query($mysqli, $queryStr);
 }
 
-/* Update totals to wcouncils */
+/* Update totals to wcouncils table */
 $queryStr = "UPDATE wcouncils SET con='{$con}', lab='{$lab}', ld='{$ld}', grn='{$grn}', ukip='{$ukip}',  plaid='{$pc}', snp='{$snp}', dup='{$dup}', sf='{$sf}', uup='{$uup}', sdlp='{$sdlp}', ali='{$ali}', tuv='{$tuv}', pup='{$pup}', other='{$ind}', vacant='{$vac}', notes='{$notes}', last='{$date}' WHERE wcouncils.id = ".pg_escape_string($councilNumber);
 $result = mysqli_query($mysqli, $queryStr) or die(mysqli_error($mysqli));
 }

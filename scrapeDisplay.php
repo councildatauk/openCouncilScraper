@@ -1,5 +1,5 @@
 <?
-/* Clean party names to tags */
+/* Clean party names to tags to populate pCode array */
 for($i=0;$i<count($n);$i++) {
  if((substr($p[$i], 0, 5) != "Conwy") && (substr($p[$i], 0, 3) == "Con" or substr($p[$i], 0, 3) == "CON" or substr($p[$i], 0, 12) == "Scottish Con" or substr($p[$i], 0, 5) == "DGCon")) { $pCode[$i] = "CON"; }
  elseif(substr($p[$i], 0, 3) == "Lab" or substr($p[$i], 0, 3) == "LAB" or substr($p[$i], 0, 4) == "SLab" or substr($p[$i], 0, 12) == "Scottish Lab" or substr($p[$i], 0, 9) == "Welsh Lab") { $pCode[$i] = "LAB"; }
@@ -39,7 +39,7 @@ for($i=0;$i<count($n);$i++) {
  if($pCode[$i] == "PUP") { $pup++; }
 }
 
-/* Export results as session data, in preparation for sending to insert.php */
+/* Export results as session data - ### Party totals here are no longer used ### These could be used to populate a new council after a May election as they come directly from the scrape. Current functionality is to provide a comparison between existing data and scraped data in a table, allow edits, then count party numbers based on the table content. In current form, ward names never get updated, even if you edit the field in the table. */
 $_SESSION['n'] = $n;
 $_SESSION['p'] = $p;
 $_SESSION['pCode'] = $pCode;
@@ -65,15 +65,13 @@ $_SESSION['tuv'] = $tuv;
 $_SESSION['pup'] = $pup;
 if($councilNumber < 1000) { $_SESSION['total'] = $con+$lab+$ld+$grn+$ukip+$pc+$snp+$ind+$vac; } else { $_SESSION['total'] = $dup+$sf+$uup+$sdlp+$ali+$ali+$tuv+$pup+$ind+$vac; }
 
-/* DEBUG echo $councilNumber; var_dump($n);echo"<br>"; var_dump($p);echo"<br>"; var_dump($w);echo"<br>"; */
-
 /* Query existing data from ward and wcouncillors tables */
 $queryStr = "SELECT w.id as wID, w.councilID, w.name as wName, w.byelection, w.election, w.defending, w.deleted as wDel, c.id as cID, c.name as cName, c.party, c.partyCode, c.wardID, c.deleted as cDel FROM wards w INNER JOIN wcouncillors c ON w.id = c.wardID WHERE w.councilID = " . $councilNumber . " AND c.deleted = '0000-00-00' AND w.deleted = '0000-00-00' ORDER BY w.id";
 if(!$result = $mysqli->query($queryStr)) { echo "Query Err"; exit; }
 if($result->num_rows === 0) { echo "No matched rows"; exit; }
 
 while($row = $result->fetch_assoc()) {
-/* Get existing data from ward and wcouncillor tables */
+/* Extract into arrays */
 $wID[] = $row['wID'];
 $wName[] = $row['wName'];
 $bye[] = $row['byelection'];
@@ -101,6 +99,7 @@ $notes = $row['notes'];
     /* (Check totals are correct) GB */
 if($councilNumber < 1000) {
 if($con+$lab+$ld+$grn+$ukip+$pc+$snp+$ind+$vac == $row['total']) { $tC = 1; $check = '<p style="color: #000000; background-color:88ff88;">Total OK</p> '; } else { $tC = 0; $check = "Total Check NG"; }
+    /* Check party totals are correct and create background effects to indicate result */
 if($con == $row['con']) {$cC = 1; $conCh = '<p style="background-color:88ff88;">OK</p>';} else {$cC = 0; $conCh = '<p style="background-color:ff8888;">NG</p>';}
 if($lab == $row['lab']) {$lC = 1; $labCh = '<p style="background-color:88ff88;">OK</p>';} else {$lC = 0; $labCh = '<p style="background-color:ff8888;">NG</p>';}
 if($ld == $row['ld']) {$dC = 1; $ldCh = '<p style="background-color:88ff88;">OK</p>';} else {$dC = 0; $ldCh = '<p style="background-color:ff8888;">NG</p>';}
@@ -125,6 +124,7 @@ echo '<tr><td class="ni-ass-second" colspan=3>' . $row['notes'] . '</td></tr>';
 echo '</table>';
 } else { /* Check totals are correct - NI */
 if($dup+$sf+$uup+$sdlp+$ali+$tuv+$grn+$pup+$ind+$vac == $row['total']) { $tC = 1; $check = '<p style="color: #000000; background-color:88ff88;">Total OK</p> '; } else { $tC = 0; $check = "Total Check NG"; }
+    /* Check party totals are correct and create background effects to indicate result */
 if($dup == $row['dup']) {$dC = 1; $dupCh = '<p style="background-color:88ff88;">OK</p>';} else {$dC = 0; $dupCh = '<p style="background-color:ff8888;">NG</p>';}
 if($sf == $row['sf']) {$fC = 1; $sfCh = '<p style="background-color:88ff88;">OK</p>';} else {$fC = 0; $sfCh = '<p style="background-color:ff8888;">NG</p>';}
 if($uup == $row['uup']) {$uC = 1; $uupCh = '<p style="background-color:88ff88;">OK</p>';} else {$uC = 0; $uupCh = '<p style="background-color:ff8888;">NG</p>';}
@@ -152,23 +152,25 @@ echo '</table>';
 } /* End bracket for NI totals check */
 } /* End bracket for if(not NI) then else */
 
+
+/*  ###  Start of main table  ###  */
 /* Pre-populate data structure with existing data: */
 for($i=0;$i<count($wID);$i++) {
-   $wA[0][$i] = $wID[$i];
-   $wA[1][$i] = $wName[$i];
-   $wA[2][$i] = $bye[$i];
-   $wA[3][$i] = $ele[$i];
-   $wA[4][$i] = $def[$i];
-   $wA[5][$i] = $wDel[$i];
-   $wA[6][$i] = $cID[$i];
-   $wA[7][$i] = $cName[$i];
-   $wA[8][$i] = $cParty[$i];
-   $wA[9][$i] = $cpCode[$i];
-   $wA[10][$i] = $cDel[$i];
-   $wA[11][$i] = "";
-   $wA[12][$i] = "";
-   $wA[13][$i] = "";
-   $wA[14][$i] = "";
+   $wA[0][$i] = $wID[$i];	/* ward ID */
+   $wA[1][$i] = $wName[$i];	/* ward name */
+   $wA[2][$i] = $bye[$i];	/* byelection date */
+   $wA[3][$i] = $ele[$i];	/* next election date */
+   $wA[4][$i] = $def[$i];	/* defending party in byelection */
+   $wA[5][$i] = $wDel[$i];	/* ward deleted flag (0 for current, 1 for deleted) */
+   $wA[6][$i] = $cID[$i];	/* councillor ID */
+   $wA[7][$i] = $cName[$i];	/* councillor name */
+   $wA[8][$i] = $cParty[$i];	/* party */
+   $wA[9][$i] = $cpCode[$i];	/* 3 letter party code */
+   $wA[10][$i] = $cDel[$i];	/* councillor deleted flag (0 for current, 1 for deleted) */
+   $wA[11][$i] = "";		/* scraped councillor name */
+   $wA[12][$i] = "";		/* scraped 3 letter party code */
+   $wA[13][$i] = "";		/* scraped party */
+   $wA[14][$i] = "";		/* scraped ward name */
 }
 
 /* Take each scraped result */
@@ -183,13 +185,10 @@ for($i=0;$i<count($wID);$i++) {
     $wA[13][$j] = $p[$i]; 
     $wA[14][$j] = $w[$i]; 
   }
-    /* If existing is Vacant, fill with vacant 
-   if($wA[7][$i] == "Vacancy" or $wA[7][$i] == "zzz") { $wA[11][$i] = "Vacancy"; }
-   if($wA[9][$i] == "VAC") { $wA[12][$i] = "VAC"; }*/
  }
 }
 
-/* Check for correct scraped total */
+/* Check for correct scraped total - errors here can be ok, as data doesn't come directly from scraped $n but from edited table with autocorrections */
 if(sizeof($cName) != sizeof($n)) {
  echo 'EXPECTING '.sizeof($cName).', RECIEVED '.sizeof($n);
 }
@@ -199,8 +198,8 @@ echo '<br><form method="POST" action="insert.php"><table border=1 class="sortabl
 /* Set change var to 0, if there are any blues (use of existing data due to no match) or reds (change of party), it'll get set to 1 */
 $change = 0;
 for($i=0;$i<count($wID);$i++) {
-/* Check for non-matches and fill with existing */
- if($wA[11][$i] == "") { echo "missing: ".$n[$i]." # "; $wA[11][$i] = $wA[7][$i]; $wA[12][$i] = $wA[9][$i]; $usedExisting = ' style="background-color:#3333dd;"'; $change = 1; } else { $usedExisting = ''; }
+/* Check for non-matches and fill with existing data */
+ if($wA[11][$i] == "") { echo "No scraped data for ward ".$wA[0][$i]." ".$wA[1][$i]; $wA[11][$i] = $wA[7][$i]; $wA[12][$i] = $wA[9][$i]; $usedExisting = ' style="background-color:#3333dd;"'; $change = 1; } else { $usedExisting = ''; }
 /* Check for party changes or potential errors */
  if($wA[9][$i] == substr($wA[12][$i],0,3)) { $partyOK = ' style="background-color:#33dd33;"'; } else { $partyOK = ' style="background-color:#dd3333;"'; $change = 1; }
   echo '<tr>
@@ -218,20 +217,24 @@ for($i=0;$i<count($wID);$i++) {
 echo '<tr><td colspan=8><label for="notes">NOT</label><input style="width:100%;" type="text" name="NOT" id="NOT" value="'.$notes.'"></td></tr>';
 echo '<tr><td><input type="submit" value="Submit" id="submit"></td></tr></table></form>';
 
-/* Draw raw scrape table */
+/* Draw raw scrape table with scraped and cleaned councillor name, party, party code, ward name */
 echo '<table>';
 for($i=0;$i<count($n);$i++) {
 echo '<tr><td>'.$w[$i].'</td><td>'.$n[$i].'</td><td>'.$pCode[$i].'</td><td>'.$p[$i].'</td></tr>';
 }
 echo '</table>';
 
-/* If no changes, save new date and move on */
+/* AUTO mode: If no changes SAVE new date, if changes detected SKIP and leave for manual check */
 $newCouncil = $councilNumber + 1;
-if($autoFlag == "1" && $change == 0) { echo 'SAVING...<script>window.location.href = "insert.php";</script>'; }
-/* If changes, don't save, and move on */
+if($autoFlag == "1" && $change == 0) {
+ echo 'SAVING...<script>window.location.href = "insert.php";</script>'; 
+}
 elseif($autoFlag == "1") {
- if(in_Array($newCouncil, $manual)) { $newCouncil++; }
- echo 'SKIPPING...<script>window.location.href = "scrape.php?a=1&c='.$newCouncil.'";</script>'; }
+ if(in_Array($newCouncil, $manual)) {
+  $newCouncil++; 
+ }
+ echo 'SKIPPING...<script>window.location.href = "scrape.php?a=1&c='.$newCouncil.'";</script>'; 
+}
 
 /* End */
 echo "</table></body></html>";
