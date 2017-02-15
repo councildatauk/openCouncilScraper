@@ -207,6 +207,10 @@ for($i=0;$i<count($n);$i++) {
  if($councilNumber == 358) { $n[$i] = strtok($n[$i],'-'); }
  if($councilNumber == 146 && $n[$i] == "Gary Scott") { $p[$i] = "Liberal Democrats"; }
  if($councilNumber == 292 && $n[$i] == "Mrs Myra Joan Whiteside") { $p[$i] = "Labour"; }
+ if($councilNumber == 1002 && $n[$i] == "Jones" && $w[$i] == "Portadown") { $p[$i] = "IND"; } /* UKIPs in NI part of IND/Other */
+ if($councilNumber == 1008 && $n[$i] == "Donna Anderson") { $p[$i] = "IND"; } /* UKIPs in NI part of IND/Other */
+ if($councilNumber == 1008 && $n[$i] == "Noel Jordan") { $p[$i] = "IND"; } /* UKIPs in NI part of IND/Other */
+ if($councilNumber == 1004 && $n[$i] == "David Harding") { $p[$i] = "IND"; } /* CONs in NI part of IND/Other */
 
 /* Remove text in brackets */
 $n[$i] = preg_replace("/\([^)]+\)/","",$n[$i]); 

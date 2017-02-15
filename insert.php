@@ -34,6 +34,13 @@ $grn = 0;
 $ukip = 0;
 $pc = 0;
 $snp = 0;
+$dup = 0;
+$sf = 0;
+$uup = 0;
+$sdlp = 0;
+$ali = 0;
+$tuv = 0;
+$pup = 0;
 $ind = 0;
 $vac = 0;
 $total = 0;
@@ -51,8 +58,8 @@ while($row = $result->fetch_assoc()) {
 $realTotal = $result->num_rows;
 }
 
-if(isset($_POST['wName0'])) {     /* i.e. if the form was submitted on the last page, run this loop (end of loop line 105) */
-/* Move post data into arrays */
+if(isset($_POST['wName0'])) {     /* i.e. if the form was submitted on the last page, run this loop (end of loop ~line 105) */
+/* Move post data into arrays (first need to generate post names in format cName1, cName2, etc.) */
 for($i=0;$i<$realTotal;$i++) {
 $wIDPOST = "wID".$i;
 $wNamePOST = "wName".$i;
@@ -79,9 +86,16 @@ for($i=0;$i<count($wID);$i++) {
  if($cpCode[$i] == "LAB") { $lab++; }
  if($cpCode[$i] == "LD") { $ld++; }
  if($cpCode[$i] == "GRN") { $grn++; }
- if(substr($cpCode[$i],0,3) == "UKI") { $ukip++; }
+ if(substr($cpCode[$i],0,3) == "UKI") { $ukip++; } /* Just first 3 because some fields were/are limited to 3 chars */
  if($cpCode[$i] == "PC") { $pc++; }
  if($cpCode[$i] == "SNP") { $snp++; }
+ if($cpCode[$i] == "DUP") { $dup++; }
+ if($cpCode[$i] == "SF") { $sf++; }
+ if($cpCode[$i] == "UUP") { $uup++; }
+ if(substr($cpCode[$i],0,3) == "SDL") { $sdlp++; }
+ if($cpCode[$i] == "ALI") { $ali++; }
+ if($cpCode[$i] == "TUV") { $tuv++; }
+ if($cpCode[$i] == "PUP") { $pup++; }
  if($cpCode[$i] == "IND") { $ind++; }
  if($cpCode[$i] == "VAC") { $vac++; }
 }
@@ -100,7 +114,7 @@ $result = mysqli_query($mysqli, $queryStr);
 }
 
 /* Update totals to wcouncils */
-$queryStr = "UPDATE wcouncils SET con='{$con}', lab='{$lab}', ld='{$ld}', grn='{$grn}', ukip='{$ukip}',  plaid='{$pc}', snp='{$snp}', other='{$ind}', vacant='{$vac}', notes='{$notes}', last='{$date}' WHERE wcouncils.id = ".pg_escape_string($councilNumber);
+$queryStr = "UPDATE wcouncils SET con='{$con}', lab='{$lab}', ld='{$ld}', grn='{$grn}', ukip='{$ukip}',  plaid='{$pc}', snp='{$snp}', dup='{$dup}', sf='{$sf}', uup='{$uup}', sdlp='{$sdlp}', ali='{$ali}', tuv='{$tuv}', pup='{$pup}', other='{$ind}', vacant='{$vac}', notes='{$notes}', last='{$date}' WHERE wcouncils.id = ".pg_escape_string($councilNumber);
 $result = mysqli_query($mysqli, $queryStr) or die(mysqli_error($mysqli));
 }
 
@@ -123,6 +137,6 @@ if($autoFlag == "1") {
  if(in_Array($newCouncil, $loopPages)) { echo 'SKIPPING...<script>window.location.href = "loopScrape.php?a=1&c='.$newCouncil.'";</script>'; }
  else { echo 'SKIPPING...<script>window.location.href = "normalScrape.php?a=1&c='.$newCouncil.'";</script>'; }
 }
-else { echo '<script>window.location.href = "processing.php";</script>'; }
+else { if($councilNumber < 1000) { echo '<script>window.location.href = "processing.php";</script>'; } else { echo '<script>window.location.href = "niprocessing.php";</script>'; }}
 
 ?>

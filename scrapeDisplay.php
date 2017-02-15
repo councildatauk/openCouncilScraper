@@ -87,7 +87,7 @@ $cpCode[] = $row['partyCode'];
 $cDel[] = $row['cDel'];
 }
 
-/* Totals table shown for error debugging only. These totals are updated in insert based on sum of scraped councillors */
+/* Totals table (left column = existing database, editable column (editing does nothing) = scraped totals) */
 $queryStr = "SELECT name, total, con, lab, ld, grn, ukip, plaid, snp, other, vacant, url, notes FROM wcouncils WHERE id = " . $councilNumber;
 /* Overwrite with alternative query for NI councils */
 if($councilNumber > 1000) {$queryStr = "SELECT name, total, dup, sf, uup, sdlp, ali, tuv, grn, pup, other, vacant, url, notes FROM wcouncils WHERE id = " . $councilNumber;}
@@ -124,7 +124,6 @@ echo '<tr><td class="ni-ass-second">' . $row['vacant'] . '</td><td>'.$vac.'</td>
 echo '<tr><td class="ni-ass-second" colspan=3>' . $row['notes'] . '</td></tr>';
 echo '</table>';
 } else { /* Check totals are correct - NI */
-
 if($dup+$sf+$uup+$sdlp+$ali+$tuv+$grn+$pup+$ind+$vac == $row['total']) { $tC = 1; $check = '<p style="color: #000000; background-color:88ff88;">Total OK</p> '; } else { $tC = 0; $check = "Total Check NG"; }
 if($dup == $row['dup']) {$dC = 1; $dupCh = '<p style="background-color:88ff88;">OK</p>';} else {$dC = 0; $dupCh = '<p style="background-color:ff8888;">NG</p>';}
 if($sf == $row['sf']) {$fC = 1; $sfCh = '<p style="background-color:88ff88;">OK</p>';} else {$fC = 0; $sfCh = '<p style="background-color:ff8888;">NG</p>';}
@@ -176,7 +175,7 @@ for($i=0;$i<count($wID);$i++) {
 for($i=0;$i<count($wID);$i++) {
  /* Check if the name matches an existing name */
  for($j=0;$j<count($cID);$j++) {
-   if(stripslashes($n[$i]) == htmlentities(stripslashes($cName[$j]))) {
+   if(stripslashes($n[$i]) == htmlentities(stripslashes($cName[$j]))) { /* echo $i.": ".$wA[7][$j]." matches to scraped ".$n[$i]."<br>"; */
     /* Finish building new data structure:
       $cName,$wID,$wName,$bye,$ele,$def,$wDel,$cID,$cParty,$cpCode,$cDel and $n,$pCode,$p,$w */
     $wA[11][$j] = $n[$i]; 
@@ -184,9 +183,9 @@ for($i=0;$i<count($wID);$i++) {
     $wA[13][$j] = $p[$i]; 
     $wA[14][$j] = $w[$i]; 
   }
-    /* If existing is Vacant, fill with vacant */
+    /* If existing is Vacant, fill with vacant 
    if($wA[7][$i] == "Vacancy" or $wA[7][$i] == "zzz") { $wA[11][$i] = "Vacancy"; }
-   if($wA[9][$i] == "VAC") { $wA[12][$i] = "VAC"; }
+   if($wA[9][$i] == "VAC") { $wA[12][$i] = "VAC"; }*/
  }
 }
 
@@ -196,15 +195,13 @@ if(sizeof($cName) != sizeof($n)) {
 }
 
 /* Draw table. nowVacant button sends cID, wID, sets cDel to 1, creates new cID as VAC with wardID = wID */
-if($councilNumber < 1000) {
-echo '<br><form method="POST" action="insert.php"><table border=1 class="sortable"><tr><td>wWard ID</td><td>wWard</td><td>wsName</td><td>wsCode</td><td>wDefending</td><td>wByelection</td><td>wElection</td></tr>'; } else {
-echo '<br><form method="POST" action="niInsert.php"><table border=1 class="sortable"><tr><td>wWard ID</td><td>wWard</td><td>wsName</td><td>wsCode</td><td>wDefending</td><td>wByelection</td><td>wElection</td></tr>'; }
+echo '<br><form method="POST" action="insert.php"><table border=1 class="sortable"><tr><td>wWard ID</td><td>wWard</td><td>wsName</td><td>wsCode</td><td>wDefending</td><td>wByelection</td><td>wElection</td></tr>';
 /* Set change var to 0, if there are any blues (use of existing data due to no match) or reds (change of party), it'll get set to 1 */
 $change = 0;
 for($i=0;$i<count($wID);$i++) {
 /* Check for non-matches and fill with existing */
- if($wA[11][$i] == "") { $wA[11][$i] = $wA[7][$i]; $wA[12][$i] = $wA[9][$i]; $usedExisting = ' style="background-color:#3333dd;"'; $change = 1; } else { $usedExisting = ''; }
-/* Check for missing rows */
+ if($wA[11][$i] == "") { echo "missing: ".$n[$i]." # "; $wA[11][$i] = $wA[7][$i]; $wA[12][$i] = $wA[9][$i]; $usedExisting = ' style="background-color:#3333dd;"'; $change = 1; } else { $usedExisting = ''; }
+/* Check for party changes or potential errors */
  if($wA[9][$i] == substr($wA[12][$i],0,3)) { $partyOK = ' style="background-color:#33dd33;"'; } else { $partyOK = ' style="background-color:#dd3333;"'; $change = 1; }
   echo '<tr>
 <td '.$usedExisting.'><input type="text" name="wID'.$i.'" value="'.$wA[0][$i].'"></td>
