@@ -230,11 +230,8 @@ $newCouncil = $councilNumber + 1;
 if($autoFlag == "1" && $change == 0) { echo 'SAVING...<script>window.location.href = "insert.php";</script>'; }
 /* If changes, don't save, and move on */
 elseif($autoFlag == "1") {
- if(in_Array($newCouncil, $manualPages)) { $newCouncil++; }
- if(in_Array($newCouncil, $uniquePages)) { echo 'SKIPPING...<script>window.location.href = "crawlScrape.php?a=1&c='.$newCouncil.'";</script>'; }
- if(in_Array($newCouncil, $loopPages)) { echo 'SKIPPING...<script>window.location.href = "loopScrape.php?a=1&c='.$newCouncil.'";</script>'; }
- else { echo 'SKIPPING...<script>window.location.href = "normalScrape.php?a=1&c='.$newCouncil.'";</script>'; }
-}
+ if(in_Array($newCouncil, $manual)) { $newCouncil++; }
+ echo 'SKIPPING...<script>window.location.href = "scrape.php?a=1&c='.$newCouncil.'";</script>'; }
 
 /* End */
 echo "</table></body></html>";
