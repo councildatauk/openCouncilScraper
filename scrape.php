@@ -87,7 +87,7 @@ elseif(in_Array($councilNumber, $newry)) { include("newryScrape.php"); echo " (N
 elseif(in_Array($councilNumber, $crawl)) { include("crawlScrape.php"); echo " (CRAWL)"; }
 else { include("normalScrape.php"); echo " (NORMAL)"; }
 
-/* Additional general cleanups (for loop extends from here to line 274 */
+/* Additional general cleanups (for loop extends from here to line 268 */
 if($blockCleaningFlag == 0) {
 for($i=0;$i<count($n);$i++) { 
  if(substr($p[$i],0,14) == "Representing; ") { $p[$i] = trim(substr($p[$i],14)); }
@@ -238,7 +238,7 @@ $w[$i] = preg_replace('/\s+/', ' ', trim($w[$i]));
 /* Replace ampersand with 'and', replace comma with nothing */
 if(strpos($w[$i],'&') !== FALSE) { $w[$i] = str_replace('&', 'and', $w[$i]); }
 if(strpos($w[$i],',') !== FALSE) { $w[$i] = str_replace(',', '', $w[$i]); }
-}
+
 
 /* Removal of mayors who aren't councillors and vacant seats that put data out of sync */
  if($councilNumber == 95 && $n[$i] == "Executive Mayor K. R. Allsop") { $n[$i] = "IG"; $p[$i] = "IG"; $w[$i] = "IG"; }
@@ -265,6 +265,7 @@ if(strpos($w[$i],',') !== FALSE) { $w[$i] = str_replace(',', '', $w[$i]); }
  if($councilNumber == 16 && $n[$i] == "Vacancy") { $n[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 152 && substr($n[$i],0,7) == "Vacancy") { $n[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 152 && substr($n[$i],0,14) == "Elizabeth Parr") { $n[$i] = "IG"; $w[$i] = "IG"; $p[$i-2] = "IG"; }
+}
 
 /* Remove Ignored Fields from section above and re-shuffle arrays as reqd */
 for($i=0;$i<count($n);$i++) {
