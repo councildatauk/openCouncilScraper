@@ -45,8 +45,6 @@ $ind = 0;
 $vac = 0;
 $total = 0;
 
-include("scrapeTypeTable.inc");
-
 /* Ensure names can be unicode */
 for($i=0;$i<count($n[$i]);$i++) { $n[$i] = htmlentities($n[$i]); }
 
@@ -130,13 +128,13 @@ $result = mysqli_query($mysqli, $queryStr) or die(mysqli_error($mysqli));
 if($autoFlag == "1" && $councilNumber == "406") { echo '<script>window.location.href = "processing.php";</script>'; }
 
 /* If in auto mode, move to next (skipping manual pages), if in a=0 return to processing */
+$manual = array (81,106,131,170,173,270);
 if($autoFlag == "1") {
  $newCouncil = $councilNumber + 1;
  if(in_Array($newCouncil, $manualPages)) { $newCouncil++; }
- if(in_Array($newCouncil, $crawlPages)) { echo 'SKIPPING...<script>window.location.href = "crawlScrape.php?a=1&c='.$newCouncil.'";</script>'; }
- if(in_Array($newCouncil, $loopPages)) { echo 'SKIPPING...<script>window.location.href = "loopScrape.php?a=1&c='.$newCouncil.'";</script>'; }
- else { echo 'SKIPPING...<script>window.location.href = "normalScrape.php?a=1&c='.$newCouncil.'";</script>'; }
+ echo 'SKIPPING...<script>window.location.href = "scrape.php?a=1&c='.$newCouncil.'";</script>'; }
+else { 
+ if($councilNumber < 1000) { echo '<script>window.location.href = "processing.php";</script>'; } else { echo '<script>window.location.href = "niprocessing.php";</script>'; }
 }
-else { if($councilNumber < 1000) { echo '<script>window.location.href = "processing.php";</script>'; } else { echo '<script>window.location.href = "niprocessing.php";</script>'; }}
 
 ?>
