@@ -133,7 +133,7 @@ if($autoFlag == "1" && $councilNumber == "406") { echo '<script>window.location.
 if($autoFlag == "1") {
  $newCouncil = $councilNumber + 1;
  if(in_Array($newCouncil, $manualPages)) { $newCouncil++; }
- if(in_Array($newCouncil, $uniquePages)) { echo 'SKIPPING...<script>window.location.href = "crawlScrape.php?a=1&c='.$newCouncil.'";</script>'; }
+ if(in_Array($newCouncil, $crawlPages)) { echo 'SKIPPING...<script>window.location.href = "crawlScrape.php?a=1&c='.$newCouncil.'";</script>'; }
  if(in_Array($newCouncil, $loopPages)) { echo 'SKIPPING...<script>window.location.href = "loopScrape.php?a=1&c='.$newCouncil.'";</script>'; }
  else { echo 'SKIPPING...<script>window.location.href = "normalScrape.php?a=1&c='.$newCouncil.'";</script>'; }
 }
