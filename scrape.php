@@ -56,7 +56,7 @@ $xpath = new DOMXPath($doc);
   normal (i.e. grabs all data off the same page)
   Antrim and Newry are unique */
 $manual = array (81,106,131,170,173,186,270);
-$loop = array (35,56,144,179,233,303,305,309,314,318,324,1010);
+$loop = array (35,56,144,179,233,303,305,309,314,324,1010);
 $antrim = array (1001);
 $newry = array(1010);
 $crawl = array(26,33,37,43,46,66,97,108,113,115,120,121,127,135,145,146,159,167,192,198,208,209,211,215,222,226,268,275,288,307,308,310,312,317,325,326,337,339,348,349,351,358,375,387,407,1002,1006,1009);
@@ -72,6 +72,7 @@ else { include("normalScrape.php"); echo " (NORMAL)"; }
 /* Cleanup (for loop extends from here to ~line 232) */
 if($blockCleaningFlag == 0) {
 for($i=0;$i<count($n);$i++) { 
+ /*if(strpos($p[$i],chr(194)) !== false) { echo "found weird character"; $p[$i] = trim(str_replace(chr(194), "", $p[$i])); }*/
  if(substr($p[$i],0,14) == "Representing; ") { $p[$i] = trim(substr($p[$i],14)); }
  if(substr($n[$i],0,5) == "&nbsp") { $n[$i] = trim(substr($n[$i],6)); }
  if(substr($p[$i],0,5) == "&nbsp") { $p[$i] = trim(substr($p[$i],6)); }
@@ -193,6 +194,8 @@ for($i=0;$i<count($n);$i++) {
  if($councilNumber == 1008 && $n[$i] == "Donna Anderson") { $p[$i] = "IND"; } /* UKIPs in NI part of IND/Other */
  if($councilNumber == 1008 && $n[$i] == "Noel Jordan") { $p[$i] = "IND"; } /* UKIPs in NI part of IND/Other */
  if($councilNumber == 1004 && $n[$i] == "David Harding") { $p[$i] = "IND"; } /* CONs in NI part of IND/Other */
+ if($councilNumber == 321 && $n[$i] == "Allison Duncan") { $p[$i] = "IND"; } /* Coming up as Alliance in error */
+ if($councilNumber == 321 && $n[$i] == "Allan Wishart") { $p[$i] = "IND"; } /* Coming up as Alliance in error */
 
 /* Remove text in brackets */
 $n[$i] = preg_replace("/\([^)]+\)/","",$n[$i]); 

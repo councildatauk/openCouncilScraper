@@ -178,14 +178,14 @@ if(!in_Array($councilNumber, $manual)) {
  for($i=0;$i<count($wID);$i++) {
   /* Check if the name matches an existing name */
   for($j=0;$j<count($cID);$j++) {
-    if(stripslashes($n[$i]) == htmlentities(stripslashes($cName[$j]))) { /* echo $i.": ".$wA[7][$j]." matches to scraped ".$n[$i]."<br>"; */
+    if(stripslashes($n[$i]) == htmlentities(stripslashes($cName[$j]))) { /* echo $i.": ".$wA[7][$j]." matches to scraped ".$n[$i]."<br>"; */ 
      /* Finish building new data structure:
        $cName,$wID,$wName,$bye,$ele,$def,$wDel,$cID,$cParty,$cpCode,$cDel and $n,$pCode,$p,$w */
      $wA[11][$j] = $n[$i]; 
      $wA[12][$j] = $pCode[$i]; 
      $wA[13][$j] = $p[$i]; 
      $wA[14][$j] = $w[$i]; 
-   }
+   } /* else { echo $i.": "; var_dump($wA[7][$j]); echo " DOES NOT MATCH to scraped "; var_dump($n[$i]); echo "<br>"; } */
   }
  }
 }
@@ -201,7 +201,7 @@ echo '<br><form method="POST" action="insert.php"><table border=1 class="sortabl
 $change = 0;
 for($i=0;$i<count($wID);$i++) {
 /* Check for non-matches and fill with existing data */
- if($wA[11][$i] == "") { $wA[11][$i] = $wA[7][$i]; $wA[12][$i] = $wA[9][$i]; $usedExisting = ' style="background-color:#3333dd;"'; $change = 1; } else { $usedExisting = ''; }
+ if($wA[11][$i] == "") { $wA[11][$i] = $wA[7][$i]; $wA[12][$i] = $wA[9][$i]; if($wA[7][$i] !== "Vacancy") { $usedExisting = ' style="background-color:#3333dd;"'; $change = 1; }} else { $usedExisting = ''; }
 /* Check for party changes or potential errors */
  if($wA[9][$i] == substr($wA[12][$i],0,3)) { $partyOK = ' style="background-color:#33dd33;"'; } else { $partyOK = ' style="background-color:#dd3333;"'; $change = 1; }
   echo '<tr>

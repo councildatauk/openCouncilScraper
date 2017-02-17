@@ -10,7 +10,7 @@ $urls[46] = '//a[contains(@class,"page-jump")]/@href';
 $urls[66] = '//select[contains(@name,"Name")]/option/@value';
 $urls[81] = '//table[@class="results"]//tr/td/a/@href';
 $urls[97] = '//div[@class="column1"]/div/a/@href | //div[@class="morelinks"]/ul/li/a/@href';
-$urls[108] = '//div[@class="article"]//ul/li/a/@href';
+$urls[108] = '//title';
 $urls[113] = '//li/a[contains(@class,"child") and not(contains(text(),"Purbeck"))]/@href';
 $urls[115] = '//table[contains(@style,"width: 791px")]/tbody/tr/td/a[contains(text(),"Councillor")]/@href';
 $urls[120] = '//li[@class="clearfix"]/h2[@class="title"]/a[contains(text(),"Councillor ")]/@href';
@@ -79,9 +79,9 @@ $monster[81][2] = '//td[contains(text(),"Ward:")]/following-sibling::td';
 $monster[97][0] = '//div[@id="headingtext"]/h1';
 $monster[97][1] = '//div[contains(text(),"Party")]/following-sibling::div';
 $monster[97][2] = '//div[contains(text(),"Ward")]/following-sibling::div';
-$monster[108][0] = '//div[@class="article"]/h2';
-$monster[108][1] = '//div[@class="article"]/p[1]';
-$monster[108][2] = '//div[@class="article"]/p[2]';
+$monster[108][0] = '//div[@class="page-header-inner"]/h1';
+$monster[108][1] = '//h2[contains(text(),"Party")]/following-sibling::p[1][normalize-space(.)]';
+$monster[108][2] = '//h3[contains(text(),"Parishes")]/following-sibling::ul/li';
 $monster[113][0] = '//span[@class="thispage"]';
 $monster[113][1] = '//th[contains(text(),"Political group")]/following-sibling::td';
 $monster[113][2] = '//th[contains(text(),"District ward")]/following-sibling::td';
@@ -216,7 +216,7 @@ $childURL[46] = "https://www.chelmsford.gov.uk/your-council/councillors-and-deci
 $childURL[66] = "";
 $childURL[81] = "https://localdemocracy.harrogate.gov.uk/";
 $childURL[97] = "";
-$childURL[108] = "http://www.north-norfolk.gov.uk/apps/councillors/";
+$childURL[108] = "https://www.north-norfolk.gov.uk";
 $childURL[113] = "https://www.dorsetforyou.gov.uk";
 $childURL[115] = "http://www.richmondshire.gov.uk";
 $childURL[120] = "";
@@ -262,6 +262,20 @@ $childURL[1009] = "http://www.midulstercouncil.org/Council/Councillors";
 /* Get url list & convert to array */
 $partyList = $xpath->query($urls[$councilNumber]);
 foreach($partyList as $item) {$pL[] = trim($item->nodeValue);}
+
+/* Second stage loop for North Norfolk (108) only */
+if($councilNumber == 108) {
+ $pL[0] = "/members/?page=1"; $pL[1] = "/members/?page=2"; $pL[2] = "/members/?page=3"; $pL[3] = "/members/?page=4"; $pL[4] = "/members/?page=5"; $pL[5] = "/members/?page=6"; $pL[6] = "/members/?page=7"; $pL[7] = "/members/?page=8"; 
+for($m=0;$m<count($pL);$m++) { $oldPL[$m] = $pL[$m]; }
+unset($pL);
+for($m=0;$m<count($oldPL);$m++) {
+ $string = file_get_contents($childURL[$councilNumber].$oldPL[$m]);
+ $doc = new DOMDocument();
+ @$doc->loadHTML($string);
+ $xpath = new DOMXPath($doc);
+ $partyList = $xpath->query('//a[@class="committee-councillor-results-item"]/@href');
+ foreach($partyList as $item) {$pL[] = str_replace("&nbsp;", "", htmlentities(addslashes(trim($item->nodeValue)), null, 'utf-8'));}
+}}
 
 /* Second stage loop for West Sussex only (26) */
 if($councilNumber == 26) {
@@ -332,7 +346,7 @@ if($councilNumber == 198) { $pL[$k] = substr($pL[$k],1); }
 $thisChildURL = $childURL[$councilNumber].$pL[$k]; echo "<br>k=".$k."/ URL=".$thisChildURL;
 $opts = array('http'=>array('header' => "User-Agent:MyAgent/1.0\r\n"));
 $context = stream_context_create($opts);
-$string = file_get_contents($thisChildURL,false,$context);
+$string = mb_convert_encoding(file_get_contents($thisChildURL,false,$context), "HTML-ENTITIES", "UTF-8");
 
 /* Convert HTML to navigable DOMXPATH object */
 $doc = new DOMDocument(); 
@@ -345,7 +359,7 @@ $party = $xpath->query($monster[$councilNumber][1]);
 $ward = $xpath->query($monster[$councilNumber][2]);
 
 /* Convert scraped data to arrays n, p and w */
-foreach($name as $item) {$n[] = utf8_decode(str_replace("&nbsp;", "", htmlentities(addslashes(trim($item->nodeValue)), null, 'utf-8')));}
+foreach($name as $item) {$n[] = str_replace("&nbsp;", "", htmlentities(addslashes(trim($item->nodeValue)), null, 'utf-8'));}
 foreach($party as $item) {$p[] = str_replace("&nbsp;", "", htmlentities(addslashes(trim($item->nodeValue)), null, 'utf-8'));}
 foreach($ward as $item) {$w[] = str_replace("&nbsp;", "", addslashes(trim($item->nodeValue)));}
 

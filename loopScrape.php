@@ -17,6 +17,7 @@ $monster[1010][2] = '//div[@class="clearboth"]/preceding-sibling::h1';
 $ward = $xpath->query($monster[$councilNumber][2]);
 foreach($ward as $item) {
  $wTmp = str_replace("&nbsp;", "", trim($item->nodeValue));
+echo $wTmp."---";
  $monster[35][0] = '//strong[text()="'.$wTmp.'"]/following-sibling::div/div/a/p';
  $monster[35][1] = '//strong[text()="'.$wTmp.'"]/following-sibling::div/div/div/@class';
  $monster[56][0] = '//h2[text()="'.$wTmp.'"]/following-sibling::ul[1]/li/a';
@@ -25,7 +26,7 @@ foreach($ward as $item) {
  $monster[144][1] = '//a[contains(@href,"PoliticalGroups")]';
  $monster[179][0] = '//h2[text()="'.$wTmp.'"]/parent::div/following-sibling::div/ol/li/div/a/div/h2/span';
  $monster[179][1] = '//h2[text()="'.$wTmp.'"]/parent::div/following-sibling::div/ol/li/div/a/div/h2/span';
- $monster[233][0] = '//h3[text()="'.$wTmp.'"]/following-sibling::div[1]/ul/li/span/strong/a';
+ $monster[233][0] = '//h3[text()="'.$wTmp.'"]/following-sibling::div[1]/ul/li/span/strong/a[normalize-space(.)]';
  $monster[233][1] = '//h3[text()="'.$wTmp.'"]/following-sibling::div[1]/ul/li/span/text()[2]';
  $monster[303][0] = '//h3[text()="'.$wTmp.'"]/following-sibling::div[position()<4]/p/span/span/a';
  $monster[303][1] = '//h3[text()="'.$wTmp.'"]/following-sibling::div[position()<4]/p/span/span/text()';
@@ -35,7 +36,7 @@ foreach($ward as $item) {
  $monster[309][1] = '//h3[text()="'.$wTmp.'"]/following-sibling::table/tr[position()>1]/td[2]';
  $monster[314][0] = '//h2[text()="'.$wTmp.'"]/following-sibling::ul[1]/li/a';
  $monster[314][1] = '//h2[text()="'.$wTmp.'"]/following-sibling::ul[1]/li/a';
- $monster[318][0] = '//h2[text()="'.$wTmp.'"]/following-sibling::table[1]/tbody/tr[2]/td/a';
+ $monster[318][0] = '//h2[text()="'.$wTmp.'"]/following-sibling::div[1]/tbody/tr[2]/td/a';
  $monster[318][1] = '//h2[text()="'.$wTmp.'"]/following-sibling::table[1]/tbody/tr[3]/td';
  $monster[324][0] = '//h2[text()="'.$wTmp.'"]/following-sibling::div[1]/div/a/span/strong';
  $monster[324][1] = '//h2[text()="'.$wTmp.'"]/following-sibling::div[1]/div/a/span/text()';
@@ -56,6 +57,12 @@ foreach($ward as $item) {
  unset($wTmp);
 }
 
+echo " <br> ";
+var_dump($n); echo " <br> ";
+var_dump($p); echo " <br> ";
+var_dump($w); echo " <br> ";
+
+
 $blockCleaningFlag = 1;
 /* Own cleaning section */
 for($i=0;$i<count($n);$i++) {
@@ -69,9 +76,10 @@ if($councilNumber == "314" && strpos($n[$i], '-') !== false) { $n[$i] = substr($
 if($councilNumber == "318" && strpos($p[$i], 'Leader') !== false) { $p[$i] = substr($p[$i], 14); }
 if($councilNumber == "318") { $w[$i] = substr($w[$i], strpos($w[$i], '-') +2); }
 if($councilNumber == "324") { $w[$i] = substr($w[$i], strpos($w[$i], ':') +2); }
- $n[$i] = preg_replace("/\([^)]+\)/","",$n[$i]); 
- $p[$i] = preg_replace("/\([^)]+\)/","",$p[$i]);
- $w[$i] = preg_replace("/\([^)]+\)/","",$w[$i]);
+ $n[$i] = trim(preg_replace("/\([^)]+\)/","",$n[$i])); 
+ $p[$i] = trim(preg_replace("/\([^)]+\)/","",$p[$i]));
+ $w[$i] = trim(preg_replace("/\([^)]+\)/","",$w[$i]));
+ $n[$i] = trim(preg_replace(array('/\s{2,}/', '/[\t\n]/'),' ',$n[$i]));  /* Remove whitespace and newlines */
 }
 
 ?>

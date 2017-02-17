@@ -12,7 +12,7 @@ echo '
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf8_unicode_ci"/> <meta http-equiv="Content-Language" content="en" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/> <meta http-equiv="Content-Language" content="en" />
 <link rel="stylesheet" href="ukpol.css">
 <script src="sorttable.js"></script>
 </head>
