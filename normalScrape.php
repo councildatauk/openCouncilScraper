@@ -811,7 +811,7 @@ $monster[305][2] = '//ul/li/a[contains(text(), "Councillor") and contains(@href,
 $monster[306][0] = '//li/div/h3/a';
 $monster[306][1] = '//li/div/p[2]';
 $monster[306][2] = '//li/div/p[1]';
-$monster[311][0] = '//ul[@class="item-list item-list__articles"]/li/a/img/@alt';
+$monster[311][0] = '//ul[@class="item-list item-list__articles"]/li//a/text()[normalize-space()]';
 $monster[311][1] = '//ul[@class="item-list item-list__articles"]/li/p[2]';
 $monster[311][2] = '//ul[@class="item-list item-list__articles"]/li/p[1]';
 $monster[313][0] = '//div[contains(@class, "PersonBlock")]/div[2]/a';

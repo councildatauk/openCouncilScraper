@@ -25,6 +25,7 @@ $p = array();		/* Will contain scraped parties as raw string */
 $pCode = array();	/* Will contain scraped parties as three letter codes */
 $w = array();		/* Will contain scraped ward names */
 $pL = array();		/* Will contain scraped list of parties where we have to loop through them */
+$fn = array();		/* For pages with separate forename and surname fields - can't seem to get concat function working in xpath */
 $blockCleaningFlag = 0;	/* Flag to skip entire cleanup section (needed for loop-type councils and antrim page) */
 $con = 0;
 $lab = 0;
@@ -163,7 +164,8 @@ for($i=0;$i<count($n);$i++) {
  if($councilNumber == 160) { $n[$i] = substr($n[$i], strpos($n[$i], ',')+2)." ".substr($n[$i], 0, strpos($n[$i], ',')+1); $p[$i] = substr($p[$i],0,strpos($p[$i],',')); $w[$i] = substr($w[$i],(strpos($w[$i],', '))); }
  if($councilNumber == 226 && strpos($p[$i], '-') !== false) { $p[$i] = substr($p[$i], strpos($p[$i], '-')+2); }
  if($councilNumber == 43 && strpos($w[$i], '/') !== false) { $tmp = explode('/', $w[$i]); $w[$i] = $tmp[4]; $w[$i] = substr($w[$i], 0, strpos($w[$i], '---')); }
- if($councilNumber == 375) { $w[$i] = substr($w[$i], strpos($w[$i], 'for ')); $p[$i] = strtok($p[$i],' ');  }
+ if($councilNumber == 375 && strpos($w[$i], 'for') !== false) { $w[$i] = substr($w[$i], strpos($w[$i], 'for ')); $p[$i] = strtok($p[$i],' ');  }
+ if($councilNumber == 375 && strpos($w[$i], 'representing') !== false) { $w[$i] = substr($w[$i], strpos($w[$i], 'representing ')); $p[$i] = strtok($p[$i],' ');  }
  if($councilNumber == 63 && strpos($n[$i], "Fiona M. Martin") !== false) { $p[$i] = "Lib Dem"; }
  if($councilNumber == 300 && strpos($n[$i], "Richard Brodie") !== false) { $p[$i] = "Lib Dem"; }
  if($councilNumber == 1008) { $p[$i] = strtok($p[$i], ','); $w[$i] = substr($w[$i], strpos($w[$i], ' ')); }
@@ -196,6 +198,7 @@ for($i=0;$i<count($n);$i++) {
  if($councilNumber == 1004 && $n[$i] == "David Harding") { $p[$i] = "IND"; } /* CONs in NI part of IND/Other */
  if($councilNumber == 321 && $n[$i] == "Allison Duncan") { $p[$i] = "IND"; } /* Coming up as Alliance in error */
  if($councilNumber == 321 && $n[$i] == "Allan Wishart") { $p[$i] = "IND"; } /* Coming up as Alliance in error */
+ if($councilNumber == 46) { $n[$i] = $fn[$i]." ".$n[$i]; }
 
 /* Remove text in brackets */
 $n[$i] = preg_replace("/\([^)]+\)/","",$n[$i]); 
@@ -243,7 +246,6 @@ if(strpos($w[$i],',') !== FALSE) { $w[$i] = str_replace(',', '', $w[$i]); }
  if($councilNumber == 365 && strpos($n[$i], "Julie Daley") !== false) { $n[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 65 && strpos($n[$i], "Karen Haberfield") !== false) { $n[$i] = "IG"; $p[$i] = "IG"; }
  if($councilNumber == 11 && strpos($n[$i], "Richard Thake") !== false) { $w[$i] = "IG"; }
- if($councilNumber == 311 && $n[$i] == "Gail Ross") { $n[$i] = "IG"; $p[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 334 && $n[$i] == "Jonathan Weston") { $n[$i] = "IG"; $p[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 367 && $n[$i] == "Bill Wright") { $n[$i] = "IG"; $p[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 340 && $n[$i] == "PJ McCaull") { $n[$i] = "IG"; $p[$i] = "IG"; $w[$i] = "IG"; }

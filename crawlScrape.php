@@ -68,8 +68,8 @@ $monster[43][0] = '//div[@class="page-title"]/h2';
 $monster[43][1] = '//div[@class="page-description"]/strong';
 $monster[43][2] = '//div[@class="image"]/img/@src';
 $monster[46][0] = '//tbody/tr/td[1]/a/span';
-$monster[46][1] = '//tbody/tr/td[3]/span';
-$monster[46][2] = '//tbody/tr/td[2]/span';
+$monster[46][1] = '//tbody/tr/td[4]/span';
+$monster[46][2] = '//tbody/tr/td[3]/span';
 $monster[66][0] = '//div[@class="ClientAreaContainer"]/div/h1';
 $monster[66][1] = '//div[@class="mgUserSideBar"]/p/span[contains(text(),"Party")]/following-sibling::text()';
 $monster[66][2] = '//div[@class="mgUserSideBar"]/p/span[contains(text(),"Ward")]/following-sibling::text()';
@@ -362,6 +362,12 @@ $ward = $xpath->query($monster[$councilNumber][2]);
 foreach($name as $item) {$n[] = str_replace("&nbsp;", "", htmlentities(addslashes(trim($item->nodeValue)), null, 'utf-8'));}
 foreach($party as $item) {$p[] = str_replace("&nbsp;", "", htmlentities(addslashes(trim($item->nodeValue)), null, 'utf-8'));}
 foreach($ward as $item) {$w[] = str_replace("&nbsp;", "", addslashes(trim($item->nodeValue)));}
+
+/* Forename query for Chelmsford only (46) */
+if($councilNumber == 46) {
+ $forename = $xpath->query("//tbody/tr/td[2]/span");
+ foreach($forename as $item) {$fn[] = str_replace("&nbsp;", "", htmlentities(addslashes(trim($item->nodeValue)), null, 'utf-8'));}
+}
 
 /* Loop back to next page */
 unset($name);
