@@ -107,7 +107,7 @@ $monster[145][0] = '//title';
 $monster[145][1] = '//p[contains(text(),"Party:")]/parent::td/following-sibling::td/p';
 $monster[145][2] = '//p[contains(text(),"Ward:")]/parent::td/following-sibling::td/p';
 $monster[146][0] = '//h1[@class="panel-title"]';
-$monster[146][1] = '//span[contains(text(),"Political grouping:")]/following-sibling::text()';
+$monster[146][1] = '//span[contains(text(),"Political grouping:")]/following-sibling::text() | //span[contains(text(),"Party:") and not(//span[contains(text(),"Political grouping:")])]/following-sibling::text()';
 $monster[146][2] = '//span[contains(text(),"Ward:")]/following-sibling::text()';
 $monster[159][0] = '//div[@id="headingtext"]/h1';
 $monster[159][1] = '//tr/td[contains(text(),"Political Party:")]/following-sibling::td';
