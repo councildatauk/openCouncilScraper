@@ -13,7 +13,7 @@ $monster[309][2] = '//div[@class="ward hidden"]/h3';
 $monster[314][2] = '//h2[contains(text(),"Ward")]';
 $monster[318][2] = '//h2[contains(text(),"Ward")]';
 $monster[324][2] = '//h2[contains(text(),"Ward")]';
-$monster[1010][2] = '//div[@class="clearboth"]/preceding-sibling::h1';
+$monster[1010][2] = '//div[@class="clearboth"]/following-sibling::h1';
 $ward = $xpath->query($monster[$councilNumber][2]);
 foreach($ward as $item) {
  $wTmp = str_replace("&nbsp;", "", trim($item->nodeValue));
@@ -40,8 +40,8 @@ echo $wTmp."---";
  $monster[318][1] = '//h2[text()="'.$wTmp.'"]/following-sibling::table[1]/tbody/tr[3]/td';
  $monster[324][0] = '//h2[text()="'.$wTmp.'"]/following-sibling::div[1]/div/a/span/strong';
  $monster[324][1] = '//h2[text()="'.$wTmp.'"]/following-sibling::div[1]/div/a/span/text()';
- $monster[1010][0] = '//h1[text()="'.$wTmp.'"]/following-sibling::div/ul/li/div/div/span';
- $monster[1010][1] = '//h1[text()="'.$wTmp.'"]/following-sibling::div/ul/li/div/div/strong/following-sibling::text()[1]';
+ $monster[1010][0] = '//h1[text()="'.$wTmp.'"]/following-sibling::ul/li/div[2]/span';
+ $monster[1010][1] = '//h1[text()="'.$wTmp.'"]/following-sibling::ul/li/div[2]/strong[1]/following-sibling::text()[1]';
  $name = $xpath->query($monster[$councilNumber][0]);
  $party = $xpath->query($monster[$councilNumber][1]);
  foreach($name as $item) {
