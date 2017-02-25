@@ -199,6 +199,7 @@ for($i=0;$i<count($n);$i++) {
  if($councilNumber == 321 && $n[$i] == "Allison Duncan") { $p[$i] = "IND"; } /* Coming up as Alliance in error */
  if($councilNumber == 321 && $n[$i] == "Allan Wishart") { $p[$i] = "IND"; } /* Coming up as Alliance in error */
  if($councilNumber == 46) { $n[$i] = $fn[$i]." ".$n[$i]; }
+ if($councilNumber == 73 && $n[$i] == "Sid Phelps") { $p[$i] = "Green"; } /* Coming up as unaligned independent and green */
 
 /* Remove text in brackets */
 $n[$i] = preg_replace("/\([^)]+\)/","",$n[$i]); 
@@ -252,6 +253,7 @@ if(strpos($w[$i],',') !== FALSE) { $w[$i] = str_replace(',', '', $w[$i]); }
  if($councilNumber == 16 && $n[$i] == "Vacancy") { $n[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 152 && substr($n[$i],0,7) == "Vacancy") { $n[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 152 && substr($n[$i],0,14) == "Elizabeth Parr") { $n[$i] = "IG"; $w[$i] = "IG"; $p[$i-2] = "IG"; }
+ if($councilNumber == 33 && $n[$i] == "Jennie Jenkins") { $p[$i] = "IG"; } /* Getting a blank entry which skews columns which won't disappear with normalize-space */
 }
 
 /* New loop to remove Ignored Fields from section above and re-shuffle arrays as reqd */
