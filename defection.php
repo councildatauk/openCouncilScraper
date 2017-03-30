@@ -11,7 +11,7 @@ $date = date('Y.m.d', time());
 /* Set councillor to deleted */
 $queryStr = "
 UPDATE wcouncillors c 
-SET c.deleted='{$date}'
+SET c.deleted='{$date}', c.partyCode='{$to}'
 WHERE c.id = $cID";
 $result = mysqli_query($mysqli, $queryStr);
 

@@ -51,16 +51,16 @@ $doc = new DOMDocument();
 $xpath = new DOMXPath($doc);
 
 /* Definitions for which webpages are handled by which scraping method. 
-  manual (i.e. click on link to manually fill in fields - stopped working)
+  manual (i.e. click on link to manually fill in fields)
   loop (i.e. page has ward name 1 then several cllrs, ward name 2, several cllrs)
   crawl (i.e. web crawl over several pages)
   normal (i.e. grabs all data off the same page)
   Antrim and Newry are unique */
-$manual = array (81,106,131,170,173,186,270);
+$manual = array (81,106,131,170,173,186,270,375);
 $loop = array (35,56,144,179,233,303,305,309,314,324,1010);
 $antrim = array (1001);
 $newry = array(1010);
-$crawl = array(26,33,37,43,46,66,97,108,113,115,120,121,127,135,145,146,159,167,192,198,208,209,211,215,222,226,268,275,288,307,308,310,312,317,325,326,337,339,348,349,351,358,375,387,407,1002,1006,1009);
+$crawl = array(26,37,43,46,66,97,108,113,115,120,121,127,135,145,146,159,167,192,198,208,209,211,215,222,226,268,275,288,307,308,310,312,317,325,326,337,339,348,349,351,358,387,407,1002,1006,1009);
 
 /* Load relevant scrape page as include */
 if(in_Array($councilNumber, $manual)) { $blockCleaningFlag = 1; echo " (MANUAL)"; }
@@ -70,7 +70,7 @@ elseif(in_Array($councilNumber, $newry)) { include("newryScrape.php"); echo " (N
 elseif(in_Array($councilNumber, $crawl)) { include("crawlScrape.php"); echo " (CRAWL)"; }
 else { include("normalScrape.php"); echo " (NORMAL)"; }
 
-/* Cleanup (for loop extends from here to ~line 232) */
+/* Cleanup (for loop extends from here to ~line 272) */
 if($blockCleaningFlag == 0) {
 for($i=0;$i<count($n);$i++) { 
  /*if(strpos($p[$i],chr(194)) !== false) { echo "found weird character"; $p[$i] = trim(str_replace(chr(194), "", $p[$i])); }*/
@@ -200,6 +200,7 @@ for($i=0;$i<count($n);$i++) {
  if($councilNumber == 321 && $n[$i] == "Allan Wishart") { $p[$i] = "IND"; } /* Coming up as Alliance in error */
  if($councilNumber == 46) { $n[$i] = $fn[$i]." ".$n[$i]; }
  if($councilNumber == 73 && $n[$i] == "Sid Phelps") { $p[$i] = "Green"; } /* Coming up as unaligned independent and green */
+ if($councilNumber == 12 && $n[$i] == "Peter Homewood") { $p[$i] = "Con"; }
 
 /* Remove text in brackets */
 $n[$i] = preg_replace("/\([^)]+\)/","",$n[$i]); 
@@ -254,6 +255,12 @@ if(strpos($w[$i],',') !== FALSE) { $w[$i] = str_replace(',', '', $w[$i]); }
  if($councilNumber == 152 && substr($n[$i],0,7) == "Vacancy") { $n[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 152 && substr($n[$i],0,14) == "Elizabeth Parr") { $n[$i] = "IG"; $w[$i] = "IG"; $p[$i-2] = "IG"; }
  if($councilNumber == 33 && $n[$i] == "Jennie Jenkins") { $p[$i] = "IG"; } /* Getting a blank entry which skews columns which won't disappear with normalize-space */
+ if($councilNumber == 234 && $n[$i] == "Joanna Dabrowska" && $p[$i] == "Labour") { $n[$i] = "IG"; $w[$i] = "IG"; } /* Councillor name and ward appear twice, mixing up results */
+ if($councilNumber == 208 && $n[$i] == "Vacancy") { $n[$i] = "IG"; $w[$i] = "IG"; }
+ if($councilNumber == 11 && $n[$i] == "Vacancy Pending Election") { $n[$i] = "IG"; $w[$i] = "IG"; }
+ if($councilNumber == 33 && $n[$i] == "Jennie Jenkins") {  $n[$i] = "IG"; $w[$i] = "IG"; }
+ if($councilNumber == 329 && $n[$i] == "Michele Scott") {  $n[$i] = "IG"; }
+ if($councilNumber == 91 && $n[$i] == "Rob Blackman") { $n[$i] = "IG"; $w[$i] = "IG"; }
 }
 
 /* New loop to remove Ignored Fields from section above and re-shuffle arrays as reqd */
