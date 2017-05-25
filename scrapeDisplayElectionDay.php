@@ -73,7 +73,7 @@ echo '<tr><td>'.$w[$i].'</td><td>'.$n[$i].'</td><td>'.$pCode[$i].'</td><td>'.$p[
 echo '</table>';
 
 /* Query existing data from ward and wcouncillors tables */
-$queryStr = "SELECT w.id as wID, w.councilID, w.name as wName, w.byelection, w.election, w.defending, w.deleted as wDel, c.id as cID, c.name as cName, c.party, c.partyCode, c.wardID, c.deleted as cDel FROM wards w INNER JOIN wcouncillors c ON w.id = c.wardID WHERE w.councilID = " . $councilNumber . " AND c.deleted = '0000-00-00' AND w.deleted = '0000-00-00' ORDER BY w.id";
+$queryStr = "SELECT w.id as wID, w.councilID, w.name as wName, w.byelection, w.election, w.defending, w.deleted as wDel FROM wards w WHERE w.councilID = " . $councilNumber . " AND w.deleted = '0000-00-00' ORDER BY w.id";
 if(!$result = $mysqli->query($queryStr)) { echo "Query Err"; exit; }
 if($result->num_rows === 0) { echo "No matched rows"; exit; }
 
@@ -85,27 +85,22 @@ $bye[] = $row['byelection'];
 $ele[] = $row['election'];
 $def[] = $row['defending'];
 $wDel[] = $row['wDel'];
-$cID[] = $row['cID'];
-$cName[] = $row['cName'];
-$cParty[] = $row['party'];
-$cpCode[] = $row['partyCode'];
-$cDel[] = $row['cDel'];
 }
 
 /*  ###  Start of main table  ###  */
 /* Pre-populate data structure with existing data: */
 for($i=0;$i<count($wID);$i++) {
    $wA[0][$i] = $wID[$i];	/* ward ID */
-   $wA[1][$i] = $wName[$i];	/* ward name */
+   $wA[1][$i] = $w[$i];	/* ward name from new scrape */
    $wA[2][$i] = $bye[$i];	/* byelection date */
    $wA[3][$i] = $ele[$i];	/* next election date */
    $wA[4][$i] = $def[$i];	/* defending party in byelection */
    $wA[5][$i] = $wDel[$i];	/* ward deleted flag (0 for current, 1 for deleted) */
-   $wA[6][$i] = $cID[$i];	/* councillor ID */
-   $wA[7][$i] = $cName[$i];	/* councillor name */
-   $wA[8][$i] = $cParty[$i];	/* party */
-   $wA[9][$i] = $cpCode[$i];	/* 3 letter party code */
-   $wA[10][$i] = $cDel[$i];	/* councillor deleted flag (0 for current, 1 for deleted) */
+/*   $wA[6][$i] = $cID[$i];	/* councillor ID */
+/*   $wA[7][$i] = $cName[$i];	/* councillor name */
+/*   $wA[8][$i] = $cParty[$i];	/* party */
+/*   $wA[9][$i] = $cpCode[$i];	/* 3 letter party code */
+/*   $wA[10][$i] = $cDel[$i];	/* councillor deleted flag (0 for current, 1 for deleted) */
    $wA[11][$i] = $n[$i];		/* scraped councillor name */
    $wA[12][$i] = $pCode[$i];		/* scraped 3 letter party code */
    $wA[13][$i] = $p[$i];		/* scraped party */
@@ -121,8 +116,8 @@ for($i=0;$i<count($wID);$i++) {
   echo '<tr>
 <td><input type="text" name="wID'.$i.'" value="'.$wA[0][$i].'"></td>
 <td><input type="text" name="wName'.$i.'" value="'.$wA[1][$i].'"></td>
-<td>'.$wA[7][$i].' ('.$wA[6][$i].')<input type="text" name="cName'.$i.'" value="'.$wA[11][$i].'"></td>
-<td>'.$wA[9][$i].'<input type="text" name="cpCode'.$i.'" value="'.$wA[12][$i].'"></td>
+<td><input type="text" name="cName'.$i.'" value="'.$wA[11][$i].'"></td>
+<td><input type="text" name="cpCode'.$i.'" value="'.$wA[12][$i].'"></td>
 <td><input type="text" name="def'.$i.'" value="'.$wA[4][$i].'" id="defectionTo'.$i.'"></td>
 <td><input type="text" name="bye'.$i.'" value="'.$wA[2][$i].'"></td>
 <td><input type="text" name="ele'.$i.'" value="'.$wA[3][$i].'"></td>

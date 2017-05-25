@@ -56,11 +56,11 @@ $xpath = new DOMXPath($doc);
   crawl (i.e. web crawl over several pages)
   normal (i.e. grabs all data off the same page)
   Antrim and Newry are unique */
-$manual = array (81,106,131,170,173,186,270,375);
+$manual = array (19,37,81,106,131,170,173,186,270,375);
 $loop = array (35,56,144,179,233,303,305,309,314,324,1010);
 $antrim = array (1001);
 $newry = array(1010);
-$crawl = array(26,37,43,46,66,97,108,113,115,120,121,127,135,145,146,159,167,192,198,208,209,211,215,222,226,268,275,288,307,308,310,312,317,325,326,337,339,348,349,351,358,387,407,1002,1006,1009);
+$crawl = array(26,37,43,46,66,97,108,113,115,120,121,127,135,146,159,167,192,198,208,209,211,215,222,226,268,275,288,307,308,310,312,317,325,326,337,339,348,349,351,358,387,407,1006,1009);
 
 /* Load relevant scrape page as include */
 if(in_Array($councilNumber, $manual)) { $blockCleaningFlag = 1; echo " (MANUAL)"; }
@@ -69,6 +69,8 @@ elseif(in_Array($councilNumber, $antrim)) { include("antrimScrape.php"); echo " 
 elseif(in_Array($councilNumber, $newry)) { include("newryScrape.php"); echo " (NEWRY)"; }
 elseif(in_Array($councilNumber, $crawl)) { include("crawlScrape.php"); echo " (CRAWL)"; }
 else { include("normalScrape.php"); echo " (NORMAL)"; }
+
+echo "Trial: ".$w[2]."..".$p[2]."<br>";
 
 /* Cleanup (for loop extends from here to ~line 272) */
 if($blockCleaningFlag == 0) {
@@ -103,7 +105,7 @@ for($i=0;$i<count($n);$i++) {
  if(substr($p[$i],0,6) == "Party;") { $p[$i] = trim(substr($p[$i],6)); }
  if(substr($p[$i],0,16) == "Group leader of ") { $p[$i] = trim(substr($p[$i],16)); }
  if(substr($n[$i],0,9) == "Alderman ") { $n[$i] = trim(substr($n[$i],9)); }
- if(strpos($w[$i],'Ward') != FALSE) { $w[$i] = str_replace(' Ward','',$w[$i]); }
+/* if(strpos($w[$i],'Ward') != FALSE) { $w[$i] = str_replace(' Ward','',$w[$i]); }*/
 
 /* Additional council specific cleanups */
  if($councilNumber == 33 && $n[$i] == "Bryn Hurren") { $p[$i] = "Liberal Democrats"; }
@@ -201,6 +203,11 @@ for($i=0;$i<count($n);$i++) {
  if($councilNumber == 46) { $n[$i] = $fn[$i]." ".$n[$i]; }
  if($councilNumber == 73 && $n[$i] == "Sid Phelps") { $p[$i] = "Green"; } /* Coming up as unaligned independent and green */
  if($councilNumber == 12 && $n[$i] == "Peter Homewood") { $p[$i] = "Con"; }
+ if($councilNumber == 133 && $n[$i] == "Paul Harrison") { $p[$i] = "Con"; }
+ if($councilNumber == 20 && $p[$i] == "") { $p[$i] = "Conservative"; } /* Comes out blank for inexplicable reason */
+ if($councilNumber == 325 && $n[$i] == "Sally Page") { $p[$i] = "Conservative"; } /* HTML error */
+ if($councilNumber == 20 && $n[$i] == "Les Sibley") { $p[$i] = "Independent Alliance"; } /* Comes out as Con due to groupings */
+ if($councilNumber == 402) { $sur = substr($n[$i],0,strpos($n[$i]," ")); $for = substr($n[$i],strpos($n[$i]," ")); $n[$i] = $for." ".$sur; }
 
 /* Remove text in brackets */
 $n[$i] = preg_replace("/\([^)]+\)/","",$n[$i]); 
@@ -226,13 +233,14 @@ $p[$i] = preg_replace('/\s+/', ' ', trim($p[$i]));
 $w[$i] = preg_replace('/\s+/', ' ', trim($w[$i]));
 
 /* Replace ampersand with 'and', replace comma with nothing */
+if(strpos($w[$i],'&amp;') !== FALSE) { $w[$i] = str_replace('&amp;', 'and', $w[$i]); }
 if(strpos($w[$i],'&') !== FALSE) { $w[$i] = str_replace('&', 'and', $w[$i]); }
 if(strpos($w[$i],',') !== FALSE) { $w[$i] = str_replace(',', '', $w[$i]); }
 
 
 /* Removal of mayors who aren't councillors and vacant seats that put data out of sync */
  if($councilNumber == 95 && $n[$i] == "Executive Mayor K. R. Allsop") { $n[$i] = "IG"; $p[$i] = "IG"; $w[$i] = "IG"; }
- if((substr($n[$i],0,19) !== "Mayor Saleha Jaffer" && $n[$i] !== "Mayor of Test Valley Councillor Karen Hamilton") && $n[$i] !== "Mayor Audrey Wales MBE" && (substr($n[$i],0,5) == "Mayor" or substr($n[$i],0,18) == "Sir Peter Soulsby" or substr($n[$i],0,17) == "Sir Steve Bullock" or substr($n[$i],0,15) == "Executive Mayor" or substr($n[$i],0,15) == "Sir Robin Wales")) {
+ if((substr($n[$i],0,19) !== "Mayor Saleha Jaffer" && $n[$i] !== "Mayor of Test Valley Councillor Karen Hamilton" && $n[$i] !== "Mayor of Test Valley Councillor Carl Borg-Neal" && $n[$i] !== "Mayor\'s Consort Councillor Gary White" && $n[$i] !== "Mayor Marcia Cameron") && $n[$i] !== "Mayor Audrey Wales MBE" && (substr($n[$i],0,5) == "Mayor" or substr($n[$i],0,18) == "Sir Peter Soulsby" or substr($n[$i],0,17) == "Sir Steve Bullock" or substr($n[$i],0,15) == "Executive Mayor" or substr($n[$i],0,15) == "Sir Robin Wales")) {
  echo "Mayor deletion activated: ".$n[$i]."/".$p[$i]."/".$w[$i];
   $n[$i] = "IG";
   if(isset($p[$i]) && trim($p[$i]) != "") {
@@ -259,8 +267,12 @@ if(strpos($w[$i],',') !== FALSE) { $w[$i] = str_replace(',', '', $w[$i]); }
  if($councilNumber == 208 && $n[$i] == "Vacancy") { $n[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 11 && $n[$i] == "Vacancy Pending Election") { $n[$i] = "IG"; $w[$i] = "IG"; }
  if($councilNumber == 33 && $n[$i] == "Jennie Jenkins") {  $n[$i] = "IG"; $w[$i] = "IG"; }
- if($councilNumber == 329 && $n[$i] == "Michele Scott") {  $n[$i] = "IG"; }
  if($councilNumber == 91 && $n[$i] == "Rob Blackman") { $n[$i] = "IG"; $w[$i] = "IG"; }
+ if($councilNumber == 251 && $n[$i] == "Leader") { $n[$i] = "IG"; $w[$i] = "IG"; }
+ if($councilNumber == 325 && $n[$i] == "Brian Walker") { $n[$i] = "IG"; $w[$i] = "IG"; }
+ if($councilNumber == 5 && substr($p[$i],0,10) == "Leader of ") { $p[$i] = "IG"; }
+ if($councilNumber == 100 && strpos($n[$i], "Vacant") !== FALSE) { $n[$i] = "IG"; $w[$i] = "IG"; }
+ if($councilNumber == 218 && $w[$i] == "Hatfield Villages" && $n[$i] == "Nick Pace") { $p[$i] = "IG"; }
 }
 
 /* New loop to remove Ignored Fields from section above and re-shuffle arrays as reqd */

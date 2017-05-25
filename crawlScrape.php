@@ -20,7 +20,7 @@ $urls[131] = '//title';
 $urls[135] = '//div[@class="media row-margin"]/a/@href';
 $urls[145] = '//li[@class="NavSibling"]/a/@href';
 $urls[146] = '//div[@class="mgThumbsList"]/ul/li/a[contains(@href, "mgUserInfo")]/@href';
-$urls[159] = '//div[@id="list"]/ul/li/a/@href';
+$urls[159] = '//div[@id="list"]/ul/li/div/h2/a/@href';
 $urls[167] = '//li[@class="oNavigationItemChild"]/a[contains(@title,"Councillor")]/@href';
 $urls[192] = '//li[@data-level="4"]/a[contains(@href,"councillors/councillor")]/@href';
 $urls[198] = '//div[@class="contact-box"]/table/tr/td/a[@class="section-links"]/@href';
@@ -163,7 +163,7 @@ $monster[312][2] = '//section[@class="pageSection"]/article/div[3]/div[@class="v
 $monster[317][0] = '//head/title';
 $monster[317][1] = '//head/title';
 $monster[317][2] = '//li[contains(text(),"Ward")]';
-$monster[325][0] = '//div[@class="page-header"]/h1';
+$monster[325][0] = '//h1';
 $monster[325][1] = '//p/strong[contains(text(),"Party:")]/following-sibling::a';
 $monster[325][2] = '//p/strong[contains(text(),"Ward:")]/following-sibling::text()';
 $monster[326][0] = '//li[@class="odd last"]/span';
@@ -226,7 +226,7 @@ $childURL[131] = "http://www.south-norfolk.gov.uk/your-councillors?field_parishe
 $childURL[135] = "https://www.southsomerset.gov.uk";
 $childURL[145] = "";
 $childURL[146] = "https://tdcdemocracy.tendringdc.gov.uk/";
-$childURL[159] = "http://old.westdevon.gov.uk/";
+$childURL[159] = "";
 $childURL[167] = "https://www.gosport.gov.uk";
 $childURL[192] = "http://www.hart.gov.uk";
 $childURL[198] = "http://www.molevalley.gov.uk";

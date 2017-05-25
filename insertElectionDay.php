@@ -31,7 +31,7 @@ $total = 0;
 for($i=0;$i<count($n[$i]);$i++) { $n[$i] = htmlentities($n[$i]); }
 
 /* Get real total for council (for use in loop below) */
-$queryStr = "SELECT id FROM wards WHERE councilID = ".$councilNumber;
+$queryStr = "SELECT id FROM wards WHERE councilID = ".$councilNumber." AND deleted = '0000-00-00'";
 if(!$result = $mysqli->query($queryStr)) { echo "Query Err"; exit; }
 if($result->num_rows === 0) { echo "No matched rows"; exit; }
 while($row = $result->fetch_assoc()) {
